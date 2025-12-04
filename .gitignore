@@ -1,0 +1,73 @@
+# ----------------------------------------
+# Node.js / JavaScript / TypeScript
+# ----------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+.pnpm-store/
+.cache/
+dist/
+build/
+out/
+.temp/
+.tmp/
+
+# Next.js
+.next/
+.next-static/
+vercel/
+*.tsbuildinfo
+
+# React (Vite / CRA / Others)
+.vite/
+.vite_deps/
+.eslintcache
+
+# Logs
+logs/
+*.log
+*.log.*
+npm-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ----------------------------------------
+# Python / Backend (FastAPI, Django, Flask)
+# ----------------------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+.pytest_cache/
+.python-version
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.mypy_cache/
+.dmypy.json
+.pyre/
+
+# FastAPI artifacts
+*.db
+*.sqlite3
+
+# ----------------------------------------
+# IDE / Editor Specific
+# ----------------------------------------
+.vscode/
+.vscode-test/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.psd
+
+# J
