@@ -10,7 +10,7 @@ export default function Hero() {
                         <div className="relative rounded-2xl shadow-xl ring-1 ring-black ring-opacity-5 bg-card p-8 sm:p-10">
                             <div className="text-center mb-8">
                                 <h3 className="text-lg font-medium text-foreground">
-                                    Check your logo risk now
+                                    Check your logo risk now!
                                 </h3>
                                 <p className="mt-2 text-sm text-muted-foreground">
                                     Upload an image to instantly analyze trademark infringement risks.
