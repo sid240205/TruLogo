@@ -60,7 +60,7 @@ export default function Home() {
                         </div>
                         <h1 className="text-5xl md:text-7xl font-medium text-white tracking-tight mb-6 leading-[1.1]">
                             Brand Safety for the <br />
-                            <span className="text-neutral-500 font-serif italic">Modern Era.</span>
+                            <span className="text-emerald-500 font-serif">Modern Era.</span>
                         </h1>
                         <p className="text-lg text-neutral-400 max-w-2xl mx-auto leading-relaxed">
                             The fastest trademark analysis engine tailored for South East Asia.
