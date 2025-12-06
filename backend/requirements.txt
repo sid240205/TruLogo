@@ -12,6 +12,6 @@ pillow
 numpy
 scikit-learn
 pydantic-settings
-imagehash
+scipy
 pytest
 httpx
