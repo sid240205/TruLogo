@@ -15,6 +15,7 @@ const Navbar = ({ currentView, setCurrentView, language, setLanguage }) => {
                 >
                     {/* Using standard img tag for simplicity with public folder asset */}
                     <img src="/logo.png" alt="TruLogo" className="h-8 w-auto object-contain" />
+                    <span className="font-['Outfit'] font-bold text-xl tracking-tight text-white mb-0.5">TruLogo</span>
                 </div>
 
                 {/* Desktop Nav */}
@@ -24,8 +25,8 @@ const Navbar = ({ currentView, setCurrentView, language, setLanguage }) => {
                             key={item.id}
                             onClick={() => setCurrentView(item.id)}
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${currentView === item.id
-                                    ? 'bg-white/10 text-white'
-                                    : 'text-neutral-400 hover:text-white hover:bg-white/5'
+                                ? 'bg-white/10 text-white'
+                                : 'text-neutral-400 hover:text-white hover:bg-white/5'
                                 }`}
                         >
                             {item.label}
