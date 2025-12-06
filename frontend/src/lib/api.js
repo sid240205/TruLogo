@@ -9,7 +9,7 @@ export const api = axios.create({
     },
 });
 
-export const analyzeLogo = async (file: File) => {
+export const analyzeLogo = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
 
@@ -21,7 +21,7 @@ export const analyzeLogo = async (file: File) => {
     return response.data;
 };
 
-export const analyzeText = async (text: string) => {
+export const analyzeText = async (text) => {
     const formData = new FormData();
     formData.append('text', text);
 

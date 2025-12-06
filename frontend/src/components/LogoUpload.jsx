@@ -6,12 +6,12 @@ import { Upload, Loader2, AlertTriangle, CheckCircle, Info, Shield, Scale } from
 import RegenerationPanel from './RegenerationPanel';
 
 export default function LogoUpload() {
-    const [file, setFile] = useState<File | null>(null);
+    const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [result, setResult] = useState<any>(null);
-    const [error, setError] = useState<string | null>(null);
+    const [result, setResult] = useState(null);
+    const [error, setError] = useState(null);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             setFile(e.target.files[0]);
             setResult(null);
@@ -36,7 +36,7 @@ export default function LogoUpload() {
         }
     };
 
-    const getRiskColor = (score: number) => {
+    const getRiskColor = (score) => {
         if (score < 30) return 'text-green-600 bg-green-50 border-green-200';
         if (score < 70) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
         return 'text-red-600 bg-red-50 border-red-200';
@@ -119,21 +119,50 @@ export default function LogoUpload() {
                             <div>
                                 <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                                     <Shield className="w-5 h-5 text-blue-600" />
-                                    Visual Analysis
+                                    AI Attention Analysis
                                 </h3>
                                 <div className="relative rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
                                     {result.heatmap ? (
                                         <img
                                             src={`data:image/png;base64,${result.heatmap}`}
-                                            alt="Similarity Heatmap"
+                                            alt="AI Attention Heatmap"
                                             className="w-full h-auto object-contain"
                                         />
                                     ) : (
                                         <div className="h-48 flex items-center justify-center text-gray-400">No Heatmap</div>
                                     )}
-                                    <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-xs p-2 text-center backdrop-blur-sm">
-                                        AI Attention Map (Heatmap)
+                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white text-xs p-3 backdrop-blur-sm">
+                                        <div className="flex items-center justify-between">
+                                            <span className="font-medium">AI Attention Map</span>
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-1">
+                                                    <div className="w-3 h-3 rounded" style={{ background: 'linear-gradient(to right, #1e1e3c, #c02040, #ff9500, #ffdd00)' }}></div>
+                                                    <span className="text-[10px]">Low → High Focus</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+                                </div>
+                                {/* Color Legend */}
+                                <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                    <p className="text-xs text-slate-600 mb-2 font-medium">Understanding the Heatmap:</p>
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 rounded" style={{ background: '#1e1e3c' }}></div>
+                                            <span className="text-xs text-slate-500">Low attention</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 rounded" style={{ background: '#c02040' }}></div>
+                                            <span className="text-xs text-slate-500">Medium</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 rounded" style={{ background: '#ffdd00' }}></div>
+                                            <span className="text-xs text-slate-500">High attention</span>
+                                        </div>
+                                    </div>
+                                    <p className="text-[10px] text-slate-400 mt-2">
+                                        Warmer colors show features the AI focuses on when comparing logos.
+                                    </p>
                                 </div>
                             </div>
 
@@ -169,7 +198,7 @@ export default function LogoUpload() {
                                         Safety Flags Detected
                                     </h3>
                                     <ul className="space-y-2">
-                                        {result.safety.flags.map((flag: any, idx: number) => (
+                                        {result.safety.flags.map((flag, idx) => (
                                             <li key={idx} className="text-sm text-red-700 bg-white/50 p-2 rounded flex items-start gap-2">
                                                 <span className="mt-0.5">•</span>
                                                 {flag.message}
@@ -184,7 +213,7 @@ export default function LogoUpload() {
                                 <h3 className="text-lg font-semibold mb-3 text-gray-900">Similar Trademarks</h3>
                                 {result.similar_marks.length > 0 ? (
                                     <ul className="space-y-3">
-                                        {result.similar_marks.slice(0, 3).map((mark: any, idx: number) => (
+                                        {result.similar_marks.slice(0, 3).map((mark, idx) => (
                                             <li key={idx} className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm flex justify-between items-center transition hover:shadow-md">
                                                 <div>
                                                     <span className="font-bold text-gray-900 block">{mark.metadata?.name || 'Unknown Mark'}</span>
@@ -210,7 +239,7 @@ export default function LogoUpload() {
                             <div className="bg-slate-50 p-5 rounded-lg border border-slate-200">
                                 <h3 className="font-semibold text-slate-800 mb-3">Recommended Actions</h3>
                                 <ul className="space-y-2">
-                                    {result.remedy?.advice?.steps?.map((step: string, idx: number) => (
+                                    {result.remedy?.advice?.steps?.map((step, idx) => (
                                         <li key={idx} className="text-sm text-slate-600 flex gap-2">
                                             <span className="font-bold text-slate-400">{idx + 1}.</span>
                                             {step}

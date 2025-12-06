@@ -3,13 +3,8 @@
 import { useState } from 'react';
 import { Loader2, RefreshCw, Check, Download } from 'lucide-react';
 
-interface RegenerationPanelProps {
-    file: File;
-    riskScore: number;
-}
-
-export default function RegenerationPanel({ file, riskScore }: RegenerationPanelProps) {
-    const [variants, setVariants] = useState<any[]>([]);
+export default function RegenerationPanel({ file, riskScore }) {
+    const [variants, setVariants] = useState([]);
     const [loading, setLoading] = useState(false);
     const [generated, setGenerated] = useState(false);
 
