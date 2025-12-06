@@ -1,262 +1,199 @@
 "use client";
+import React, { useState } from 'react';
+import { UploadCloud, Loader2, AlertTriangle, Shield, Activity } from 'lucide-react';
+import { analyzeLogoRisk, fileToBase64 } from '../services/geminiService';
 
-import { useState } from 'react';
-import { analyzeLogo } from '@/lib/api';
-import { Upload, Loader2, AlertTriangle, CheckCircle, Info, Shield, Scale } from 'lucide-react';
-import RegenerationPanel from './RegenerationPanel';
-
-export default function LogoUpload() {
+const LogoUpload = ({ onAnalysisComplete }) => {
     const [file, setFile] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [preview, setPreview] = useState(null);
+    const [brandName, setBrandName] = useState('');
+    const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
-            setFile(e.target.files[0]);
+            const selectedFile = e.target.files[0];
+            setFile(selectedFile);
+            setPreview(URL.createObjectURL(selectedFile));
             setResult(null);
-            setError(null);
         }
     };
 
-    const handleUpload = async () => {
+    const handleAnalyze = async () => {
         if (!file) return;
-
-        setLoading(true);
+        setIsAnalyzing(true);
         setError(null);
-
         try {
-            const data = await analyzeLogo(file);
+            const base64 = await fileToBase64(file);
+            const data = await analyzeLogoRisk(base64, brandName, "User is an MSME in the retail sector.");
             setResult(data);
+            onAnalysisComplete(data);
         } catch (err) {
-            setError('Failed to analyze logo. Please try again.');
             console.error(err);
+            setError("Analysis failed. Please try again.");
         } finally {
-            setLoading(false);
+            setIsAnalyzing(false);
         }
-    };
-
-    const getRiskColor = (score) => {
-        if (score < 30) return 'text-green-600 bg-green-50 border-green-200';
-        if (score < 70) return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-        return 'text-red-600 bg-red-50 border-red-200';
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-100">
-            <h2 className="text-2xl font-bold mb-6 text-gray-800">Upload Logo for Analysis</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-2 bg-surfaceHighlight min-h-[500px]">
 
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-500 transition-colors bg-gray-50/50">
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="hidden"
-                    id="logo-upload"
-                />
-                <label htmlFor="logo-upload" className="cursor-pointer flex flex-col items-center">
-                    <Upload className="w-12 h-12 text-gray-400 mb-4" />
-                    <span className="text-gray-600 font-medium">
-                        {file ? file.name : "Click to upload or drag and drop"}
-                    </span>
-                    <span className="text-sm text-gray-400 mt-2">SVG, PNG, JPG or GIF</span>
-                </label>
+            {/* Left: Input Console */}
+            <div className="p-8 border-r border-border flex flex-col justify-between relative bg-surface">
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-white font-medium text-sm tracking-wider uppercase opacity-70">Input Parameters</h3>
+                        <div className="flex gap-2">
+                            <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                            <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                        </div>
+                    </div>
+
+                    {/* Upload Area */}
+                    <div className="group relative border border-border rounded-xl bg-background hover:bg-black/50 transition-all overflow-hidden h-48 flex items-center justify-center">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                        />
+                        {preview ? (
+                            <img src={preview} alt="Preview" className="h-full w-full object-contain p-4 opacity-80" />
+                        ) : (
+                            <div className="text-center p-6">
+                                <UploadCloud className="w-8 h-8 text-neutral-500 mx-auto mb-3 group-hover:text-emerald-500 transition-colors" />
+                                <p className="text-neutral-400 text-sm">Drop Logo Asset</p>
+                                <p className="text-neutral-600 text-xs mt-1 font-mono">PNG, JPG, WEBP</p>
+                            </div>
+                        )}
+                        {/* Decoration lines */}
+                        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-neutral-600"></div>
+                        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-neutral-600"></div>
+                        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-neutral-600"></div>
+                        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-neutral-600"></div>
+                    </div>
+
+                    {/* Name Input */}
+                    <div className="space-y-2">
+                        <label className="text-xs text-neutral-500 font-mono">BRAND_NAME_STRING</label>
+                        <input
+                            type="text"
+                            value={brandName}
+                            onChange={(e) => setBrandName(e.target.value)}
+                            placeholder="Enter brand name..."
+                            className="w-full bg-background border border-border rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors font-mono"
+                        />
+                    </div>
+                </div>
+
+                {/* Action Button */}
+                <div className="mt-8">
+                    <button
+                        onClick={handleAnalyze}
+                        disabled={!file || isAnalyzing}
+                        className={`w-full py-4 rounded-lg font-bold text-sm tracking-widest uppercase transition-all flex justify-center items-center gap-2 ${!file || isAnalyzing
+                                ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed'
+                                : 'bg-white text-black hover:bg-emerald-400 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)]'
+                            }`}
+                    >
+                        {isAnalyzing ? (
+                            <><Loader2 className="animate-spin w-4 h-4" /> Processing...</>
+                        ) : (
+                            'Run Analysis'
+                        )}
+                    </button>
+                    {error && <p className="text-red-500 text-xs mt-2 text-center font-mono">{error}</p>}
+                </div>
             </div>
 
-            {file && (
-                <button
-                    onClick={handleUpload}
-                    disabled={loading}
-                    className="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center"
-                >
-                    {loading ? (
-                        <>
-                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                            Analyzing Logo DNA...
-                        </>
-                    ) : (
-                        "Analyze Risk"
-                    )}
-                </button>
-            )}
+            {/* Right: Output Console */}
+            <div className="bg-[#0c0c0c] p-8 overflow-y-auto relative min-h-[500px]">
+                {/* Background grid for terminal feel */}
+                <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
 
-            {error && (
-                <div className="mt-6 p-4 bg-red-50 text-red-700 rounded-lg flex items-center">
-                    <AlertTriangle className="w-5 h-5 mr-2" />
-                    {error}
-                </div>
-            )}
+                <h3 className="text-white font-medium text-sm tracking-wider uppercase opacity-70 mb-6 flex items-center gap-2">
+                    <Activity className="w-4 h-4" /> Analysis Output
+                </h3>
 
-            {result && (
-                <div className="mt-10 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-
-                    {/* Top Section: Score & Summary */}
-                    <div className={`p-6 rounded-xl border ${getRiskColor(result.risk_score)}`}>
-                        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                            <div className="text-center md:text-left">
-                                <h3 className="text-lg font-semibold opacity-90">Brand Health Score</h3>
-                                <div className="text-5xl font-extrabold mt-2 tracking-tight">
-                                    {(100 - result.risk_score).toFixed(0)}<span className="text-2xl opacity-60">/100</span>
-                                </div>
-                                <p className="text-sm mt-1 opacity-80 font-medium">
-                                    Risk Level: {result.risk_score > 70 ? 'CRITICAL' : result.risk_score > 30 ? 'MODERATE' : 'SAFE'}
-                                </p>
+                {result ? (
+                    <div className="space-y-6 relative z-10 animate-in fade-in slide-in-from-bottom-4">
+                        {/* Summary Block */}
+                        <div className="border border-white/10 bg-white/5 rounded-lg p-4 backdrop-blur-md">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-neutral-400 text-xs font-mono">RISK_LEVEL</span>
+                                <span className={`text-xs font-bold px-2 py-1 rounded border ${result.riskLevel === 'Low' ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/10' :
+                                        result.riskLevel === 'Medium' ? 'border-yellow-500/50 text-yellow-400 bg-yellow-500/10' :
+                                            'border-red-500/50 text-red-400 bg-red-500/10'
+                                    }`}>
+                                    {result.riskLevel}
+                                </span>
                             </div>
-                            <div className="flex-1 border-l border-opacity-20 pl-6 border-current hidden md:block">
-                                <h4 className="font-semibold mb-2 flex items-center gap-2">
-                                    <Scale className="w-4 h-4" />
-                                    Legal Recommendation
-                                </h4>
-                                <p className="text-sm opacity-90">{result.remedy?.advice?.action}</p>
-                                <p className="text-xs mt-1 opacity-70">{result.remedy?.advice?.status}</p>
+                            <div className="flex items-end gap-2 mb-2">
+                                <span className="text-4xl font-mono text-white">{result.riskScore}</span>
+                                <span className="text-sm text-neutral-500 mb-1">/ 100</span>
                             </div>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        {/* Left Col: Visuals */}
-                        <div className="space-y-6">
-                            <div>
-                                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                                    <Shield className="w-5 h-5 text-blue-600" />
-                                    AI Attention Analysis
-                                </h3>
-                                <div className="relative rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
-                                    {result.heatmap ? (
-                                        <img
-                                            src={`data:image/png;base64,${result.heatmap}`}
-                                            alt="AI Attention Heatmap"
-                                            className="w-full h-auto object-contain"
-                                        />
-                                    ) : (
-                                        <div className="h-48 flex items-center justify-center text-gray-400">No Heatmap</div>
-                                    )}
-                                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent text-white text-xs p-3 backdrop-blur-sm">
-                                        <div className="flex items-center justify-between">
-                                            <span className="font-medium">AI Attention Map</span>
-                                            <div className="flex items-center gap-2">
-                                                <div className="flex items-center gap-1">
-                                                    <div className="w-3 h-3 rounded" style={{ background: 'linear-gradient(to right, #1e1e3c, #c02040, #ff9500, #ffdd00)' }}></div>
-                                                    <span className="text-[10px]">Low → High Focus</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {/* Color Legend */}
-                                <div className="mt-3 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                                    <p className="text-xs text-slate-600 mb-2 font-medium">Understanding the Heatmap:</p>
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 rounded" style={{ background: '#1e1e3c' }}></div>
-                                            <span className="text-xs text-slate-500">Low attention</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 rounded" style={{ background: '#c02040' }}></div>
-                                            <span className="text-xs text-slate-500">Medium</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <div className="w-4 h-4 rounded" style={{ background: '#ffdd00' }}></div>
-                                            <span className="text-xs text-slate-500">High attention</span>
-                                        </div>
-                                    </div>
-                                    <p className="text-[10px] text-slate-400 mt-2">
-                                        Warmer colors show features the AI focuses on when comparing logos.
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Metadata */}
-                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                                <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                                    <Info className="w-4 h-4" />
-                                    File Metadata
-                                </h4>
-                                <div className="grid grid-cols-2 gap-y-2 text-sm">
-                                    <span className="text-gray-500">Dimensions:</span>
-                                    <span className="font-medium text-gray-900">{result.metadata?.width}x{result.metadata?.height}</span>
-                                    <span className="text-gray-500">Format:</span>
-                                    <span className="font-medium text-gray-900">{result.metadata?.format}</span>
-                                    <span className="text-gray-500">Size:</span>
-                                    <span className="font-medium text-gray-900">{result.metadata?.file_size_kb} KB</span>
-                                    <span className="text-gray-500">Dominant Color:</span>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-4 h-4 rounded-full border border-gray-200" style={{ backgroundColor: result.metadata?.dominant_color }}></div>
-                                        <span className="font-mono text-xs">{result.metadata?.dominant_color}</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <p className="text-neutral-300 text-sm leading-relaxed border-t border-white/5 pt-3 mt-3">
+                                {result.summary}
+                            </p>
                         </div>
 
-                        {/* Right Col: Matches & Safety */}
-                        <div className="space-y-6">
-                            {/* Safety Flags */}
-                            {result.safety && !result.safety.is_safe && (
-                                <div className="bg-red-50 border border-red-100 rounded-lg p-4">
-                                    <h3 className="text-sm font-bold text-red-800 mb-2 flex items-center gap-2">
-                                        <AlertTriangle className="w-4 h-4" />
-                                        Safety Flags Detected
-                                    </h3>
-                                    <ul className="space-y-2">
-                                        {result.safety.flags.map((flag, idx) => (
-                                            <li key={idx} className="text-sm text-red-700 bg-white/50 p-2 rounded flex items-start gap-2">
-                                                <span className="mt-0.5">•</span>
-                                                {flag.message}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
+                        {/* Visual Flags */}
+                        {result.flags.length > 0 && (
+                            <div className="space-y-2">
+                                <span className="text-neutral-500 text-xs font-mono">DETECTED_FLAGS</span>
+                                {result.flags.map((flag, idx) => (
+                                    <div key={idx} className="flex items-center gap-2 text-sm text-red-300 bg-red-950/20 border border-red-900/30 px-3 py-2 rounded">
+                                        <AlertTriangle className="w-3 h-3 text-red-500" />
+                                        {flag}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
 
-                            {/* Similar Marks */}
-                            <div>
-                                <h3 className="text-lg font-semibold mb-3 text-gray-900">Similar Trademarks</h3>
-                                {result.similar_marks.length > 0 ? (
-                                    <ul className="space-y-3">
-                                        {result.similar_marks.slice(0, 3).map((mark, idx) => (
-                                            <li key={idx} className="p-3 bg-white border border-gray-200 rounded-lg shadow-sm flex justify-between items-center transition hover:shadow-md">
-                                                <div>
-                                                    <span className="font-bold text-gray-900 block">{mark.metadata?.name || 'Unknown Mark'}</span>
-                                                    <span className="text-xs text-gray-500">ID: {mark.id || 'N/A'}</span>
-                                                </div>
-                                                <div className="text-right">
-                                                    <div className="text-sm font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                                                        {(mark.similarity * 100).toFixed(1)}% Match
+                        {/* Matches Table Style */}
+                        <div>
+                            <span className="text-neutral-500 text-xs font-mono block mb-2">SIMILAR_MARKS_DB</span>
+                            <div className="border border-white/10 rounded-lg overflow-hidden text-sm">
+                                <table className="w-full text-left">
+                                    <thead className="bg-white/5 text-neutral-400 font-mono text-xs">
+                                        <tr>
+                                            <th className="p-3 font-normal">ENTITY</th>
+                                            <th className="p-3 font-normal">SIMILARITY</th>
+                                            <th className="p-3 font-normal">STATUS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-white/5 text-neutral-300">
+                                        {result.similarTrademarks.map((tm, i) => (
+                                            <tr key={i} className="hover:bg-white/5 transition-colors">
+                                                <td className="p-3">{tm.name}</td>
+                                                <td className="p-3 font-mono text-xs">
+                                                    <div className="w-full bg-white/10 rounded-full h-1.5 mt-1 mb-1">
+                                                        <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: `${tm.similarityScore}%` }}></div>
                                                     </div>
-                                                </div>
-                                            </li>
+                                                    {tm.similarityScore}%
+                                                </td>
+                                                <td className="p-3 text-xs opacity-70">{tm.status}</td>
+                                            </tr>
                                         ))}
-                                    </ul>
-                                ) : (
-                                    <div className="p-4 bg-green-50 text-green-700 rounded-lg flex items-center gap-2">
-                                        <CheckCircle className="w-5 h-5" />
-                                        No conflicting trademarks found in our database.
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Legal Steps */}
-                            <div className="bg-slate-50 p-5 rounded-lg border border-slate-200">
-                                <h3 className="font-semibold text-slate-800 mb-3">Recommended Actions</h3>
-                                <ul className="space-y-2">
-                                    {result.remedy?.advice?.steps?.map((step, idx) => (
-                                        <li key={idx} className="text-sm text-slate-600 flex gap-2">
-                                            <span className="font-bold text-slate-400">{idx + 1}.</span>
-                                            {step}
-                                        </li>
-                                    ))}
-                                </ul>
-                                <div className="mt-4 pt-3 border-t border-slate-200 text-xs text-slate-500 italic">
-                                    * {result.remedy?.advice?.warning}
-                                </div>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-
-                    {/* Regeneration Panel */}
-                    {file && <RegenerationPanel file={file} riskScore={result.risk_score} />}
-                </div>
-            )}
+                ) : (
+                    <div className="h-full flex flex-col items-center justify-center text-neutral-600 space-y-4">
+                        <div className="w-16 h-16 rounded-full border border-dashed border-neutral-700 flex items-center justify-center animate-pulse">
+                            <Shield className="w-6 h-6 opacity-20" />
+                        </div>
+                        <p className="font-mono text-xs">WAITING FOR INPUT...</p>
+                    </div>
+                )}
+            </div>
         </div>
     );
-}
+};
+
+export default LogoUpload;

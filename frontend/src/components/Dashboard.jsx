@@ -1,9 +1,18 @@
+"use client";
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
-import { MOCK_CHART_DATA } from '../constants';
 import { CheckCircle, AlertTriangle, Clock, ArrowUpRight } from 'lucide-react';
 
-const Dashboard: React.FC = () => {
+const MOCK_CHART_DATA = [
+    { name: 'Jan', score: 65 },
+    { name: 'Feb', score: 59 },
+    { name: 'Mar', score: 80 },
+    { name: 'Apr', score: 81 },
+    { name: 'May', score: 90 },
+    { name: 'Jun', score: 95 },
+];
+
+const Dashboard = () => {
     return (
         <div className="space-y-8 animate-fade-in">
             <div className="flex items-end justify-between border-b border-white/10 pb-6">

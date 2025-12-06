@@ -1,15 +1,11 @@
+"use client";
 import React, { useEffect, useState } from 'react';
 import { Scale, FileText, ExternalLink, ShieldAlert } from 'lucide-react';
 import { getLegalAdvice } from '../services/geminiService';
-import { type AnalysisResult } from '../types';
 import ReactMarkdown from 'react-markdown';
 
-interface LegalAdviceProps {
-    lastResult: AnalysisResult | null;
-}
-
-const LegalAdvice: React.FC<LegalAdviceProps> = ({ lastResult }) => {
-    const [advice, setAdvice] = useState<string>('');
+const LegalAdvice = ({ lastResult }) => {
+    const [advice, setAdvice] = useState('');
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {

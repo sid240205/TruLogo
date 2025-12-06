@@ -1,97 +1,71 @@
 @import "tailwindcss";
 
 :root {
-  /* Brand Colors - Professional Trustworthy Blue */
-  --primary: #0052CC;
-  --primary-foreground: #ffffff;
-  
-  --secondary: #F4F5F7;
-  --secondary-foreground: #172B4D;
-  
-  --accent: #00B8D9;
-  --accent-foreground: #ffffff;
-  
-  --destructive: #EF4444;
-  --destructive-foreground: #ffffff;
-
-  /* Neutral Colors */
-  --background: #ffffff;
-  --foreground: #091E42;
-  
-  --muted: #F4F5F7;
-  --muted-foreground: #5E6C84;
-  
-  --card: #ffffff;
-  --card-foreground: #091E42;
-  
-  --border: #DFE1E6;
-  --input: #DFE1E6;
-  --ring: #0052CC;
-  
-  --radius: 0.5rem;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  
-  --radius-sm: calc(var(--radius) - 2px);
-  --radius-md: calc(var(--radius));
-  --radius-lg: calc(var(--radius) + 2px);
-  
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #091E42;
-    --foreground: #EBECF0;
-    
-    --primary: #2684FF;
-    --primary-foreground: #ffffff;
-    
-    --secondary: #253858;
-    --secondary-foreground: #EBECF0;
-    
-    --muted: #253858;
-    --muted-foreground: #8993A4;
-    
-    --card: #091E42;
-    --card-foreground: #EBECF0;
-    
-    --border: #253858;
-    --input: #253858;
-    --ring: #2684FF;
-  }
+  --background: #0a0a0a;
+  --foreground: #e5e5e5;
+  --font-inter: 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-mono: 'Fira Code', monospace;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-inter);
+  background-color: #050505;
+  color: #e5e5e5;
+  background-image: linear-gradient(to right, #1f1f1f 1px, transparent 1px),
+    linear-gradient(to bottom, #1f1f1f 1px, transparent 1px);
+  background-size: 60px 60px;
+  background-position: center top;
+  min-height: 100vh;
+}
+
+/* Soft fade for grid at bottom */
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(to top, #050505, transparent);
+  pointer-events: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-serif);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.glass-panel {
+  background: rgba(23, 23, 23, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@theme {
+  --color-background: #0a0a0a;
+  --color-surface: #171717;
+  --color-surfaceHighlight: #262626;
+  --color-border: #404040;
+  --color-primary: #10b981;
 }

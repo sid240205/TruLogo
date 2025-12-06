@@ -1,24 +1,21 @@
 import { GoogleGenAI, SchemaType, Type } from "@google/genai";
-import { AnalysisResult, RiskLevel } from "../types";
 
-const apiKey = import.meta.env.VITE_API_KEY || ''; // Note: In Vite, use import.meta.env.VITE_API_KEY usually, but sticking to provided code logic unless it breaks. 
-// Provided code uses process.env.API_KEY. Vite defines process.env.NODE_ENV but not others by default. 
-// I will keep it as is, but user might need to configure vite define or use VITE_ prefix.
-// However, the user said "exact same". I will keep it, but maybe add a comment or fix it if it causes a crash. 
-// Actually, process.env might be undefined in browser. I'll change to import.meta.env.VITE_API_KEY safe access or just '' to prevent runtime crash.
-// But to be "exact", I should keep it. Wait, "exact same ui/ux". Code that crashes breaks UX.
-// I'll change it to `import.meta.env.VITE_API_KEY || ''` which is the Vite equivalent. 
-// The user provided code for a node-ish or specific env. I must adapt for Vite.
+// Use NEXT_PUBLIC_ prefix for client-side env vars in Next.js
+const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || '';
 
-const ai = new GoogleGenAI({ apiKey: import.meta.env?.VITE_API_KEY || '' });
+// In Next.js, might need to be careful about where this is called (client vs server).
+// The user code was client-side (React components importing it).
+// So we use NEXT_PUBLIC_ prefix.
+
+const ai = new GoogleGenAI({ apiKey });
 
 // Helper to convert file to Base64
-export const fileToBase64 = (file: File): Promise<string> => {
+export const fileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => {
-            const result = reader.result as string;
+            const result = reader.result;
             // Remove data URL prefix (e.g., "data:image/jpeg;base64,")
             const base64 = result.split(',')[1];
             resolve(base64);
@@ -27,7 +24,7 @@ export const fileToBase64 = (file: File): Promise<string> => {
     });
 };
 
-export const analyzeLogoRisk = async (imageBase64: string, brandName: string, additionalContext: string): Promise<AnalysisResult> => {
+export const analyzeLogoRisk = async (imageBase64, brandName, additionalContext) => {
     try {
         const model = 'gemini-2.5-flash';
 
@@ -94,16 +91,16 @@ export const analyzeLogoRisk = async (imageBase64: string, brandName: string, ad
         });
 
         if (response.text) {
-            return JSON.parse(response.text) as AnalysisResult;
+            return JSON.parse(response.text);
         }
         throw new Error("No response text from Gemini");
 
     } catch (error) {
         console.error("Gemini Analysis Error:", error);
-        // Fallback mock data if API fails or key is missing (for demo stability)
+        // Fallback mock data if API fails or key is missing
         return {
             riskScore: 0,
-            riskLevel: RiskLevel.LOW,
+            riskLevel: "Low",
             summary: "Could not perform AI analysis. Please check API Key.",
             flags: ["Analysis Failed"],
             visualFeatures: [],
@@ -113,7 +110,7 @@ export const analyzeLogoRisk = async (imageBase64: string, brandName: string, ad
     }
 };
 
-export const generateSafeLogo = async (description: string, style: string): Promise<string[]> => {
+export const generateSafeLogo = async (description, style) => {
     try {
         const prompt = `Create a professional logo for a South East Asian company with this description: ${description}. 
     Style: ${style}. 
@@ -121,7 +118,7 @@ export const generateSafeLogo = async (description: string, style: string): Prom
     Design it to be trademark-safe. Elegant and modern aesthetic.`;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-3-pro-image-preview', // Note: This might strictly require auth or be gated. 
+            model: 'gemini-3-pro-image-preview',
             contents: {
                 parts: [{ text: prompt }]
             },
@@ -133,7 +130,7 @@ export const generateSafeLogo = async (description: string, style: string): Prom
             }
         });
 
-        const images: string[] = [];
+        const images = [];
         if (response.candidates?.[0]?.content?.parts) {
             for (const part of response.candidates[0].content.parts) {
                 if (part.inlineData && part.inlineData.data) {
@@ -149,7 +146,7 @@ export const generateSafeLogo = async (description: string, style: string): Prom
     }
 };
 
-export const getLegalAdvice = async (riskLevel: RiskLevel, context: string) => {
+export const getLegalAdvice = async (riskLevel, context) => {
     try {
         const prompt = `Provide detailed legal recommendations for a South East Asian (ASEAN) MSME trying to register a trademark. 
         The current risk level analyzed is: ${riskLevel}.
@@ -165,10 +162,7 @@ export const getLegalAdvice = async (riskLevel: RiskLevel, context: string) => {
             model: 'gemini-2.5-flash',
             contents: {
                 parts: [{ text: prompt }]
-            } // Fixed: contents in newer SDK might expect object or array. User code had `contents: prompt` which is shorthand in some older/generic calls but typed SDK usually wants part. 
-            // Wait, the new @google/genai SDK (v1.x) takes `contents` as specific config or string?
-            // The user code: `contents: prompt`. I'll trust the user code unless compile error.
-            // Actually, I'll stick to user code "exactness" except for the process.env bit.
+            }
         });
         return response.text || "No advice generated.";
     } catch (e) {
