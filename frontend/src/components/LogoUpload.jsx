@@ -40,6 +40,9 @@ const LogoUpload = ({ onAnalysisComplete }) => {
             setResult(geminiData);
             setBackendResult(backendData);
 
+            if (backendData?.heatmap) {
+                setShowHeatmap(true);
+            }
             onAnalysisComplete(geminiData);
         } catch (err) {
             console.error(err);
@@ -53,7 +56,7 @@ const LogoUpload = ({ onAnalysisComplete }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 bg-surfaceHighlight min-h-[500px]">
 
             {/* Left: Input Console */}
-            <div className="p-8 border-r border-border flex flex-col justify-center relative bg-surface">
+            <div className="p-8 border-r border-border flex flex-col justify-start pt-20 relative bg-surface">
 
                 {/* Upload Area */}
                 <div className="group relative border border-border rounded-xl bg-background hover:bg-black/50 transition-all overflow-hidden h-64 flex items-center justify-center shadow-lg hover:shadow-emerald-500/10 hover:border-emerald-500/30">
@@ -98,9 +101,12 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                                     e.stopPropagation(); // Prevent opening file dialog
                                     setShowHeatmap(!showHeatmap);
                                 }}
-                                className={`px-3 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider backdrop-blur-md transition-all border ${showHeatmap ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' : 'bg-black/40 text-neutral-400 border-white/10 hover:bg-black/60'}`}
+                                className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-lg border backdrop-blur-md ${showHeatmap
+                                        ? 'bg-emerald-500 text-black border-emerald-400 hover:bg-emerald-400'
+                                        : 'bg-neutral-900/90 text-white border-white/20 hover:bg-black hover:border-white/40'
+                                    }`}
                             >
-                                {showHeatmap ? 'Hide Heatmap' : 'Show AI Heatmap'}
+                                {showHeatmap ? 'Hide Heatmap' : 'Show Heatmap'}
                             </button>
                         </div>
                     )}
@@ -165,12 +171,19 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                                 </span>
                                 <span className="text-sm text-neutral-500 mb-1">/ 100</span>
                             </div>
-                            {backendResult?.heatmap && (
-                                <p className="text-emerald-400 text-xs font-mono mb-2 flex items-center gap-2">
-                                    <Activity className="w-3 h-3" />
-                                    <span>AI Heatmap Available (Toggle on logo preview)</span>
-                                </p>
-                            )}
+                            <div className="flex items-center gap-2 mb-2">
+                                {backendResult?.heatmap ? (
+                                    <p className="text-emerald-400 text-xs font-mono flex items-center gap-2">
+                                        <Activity className="w-3 h-3" />
+                                        <span>Heatmap Available (Toggle on logo preview)</span>
+                                    </p>
+                                ) : (
+                                    <p className="text-neutral-500 text-xs font-mono flex items-center gap-2 opacity-70">
+                                        <Activity className="w-3 h-3" />
+                                        <span>Heatmap Not Available</span>
+                                    </p>
+                                )}
+                            </div>
                             <p className="text-neutral-300 text-sm leading-relaxed border-t border-white/5 pt-3 mt-3">
                                 {result.summary}
                             </p>
