@@ -102,8 +102,8 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                                     setShowHeatmap(!showHeatmap);
                                 }}
                                 className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-lg border backdrop-blur-md ${showHeatmap
-                                        ? 'bg-emerald-500 text-black border-emerald-400 hover:bg-emerald-400'
-                                        : 'bg-neutral-900/90 text-white border-white/20 hover:bg-black hover:border-white/40'
+                                    ? 'bg-emerald-500 text-black border-emerald-400 hover:bg-emerald-400'
+                                    : 'bg-neutral-900/90 text-white border-white/20 hover:bg-black hover:border-white/40'
                                     }`}
                             >
                                 {showHeatmap ? 'Hide Heatmap' : 'Show Heatmap'}
@@ -158,8 +158,8 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                         <div className="border border-white/10 bg-white/5 rounded-lg p-4 backdrop-blur-md">
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-neutral-400 text-xs font-mono">RISK LEVEL</span>
-                                <span className={`text-xs font-bold px-2 py-1 rounded border ${result.riskLevel === 'Low' ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/10' :
-                                    result.riskLevel === 'Medium' ? 'border-yellow-500/50 text-yellow-400 bg-yellow-500/10' :
+                                <span className={`text-xs font-bold px-2 py-1 rounded border uppercase ${result.riskLevel?.toLowerCase() === 'low' ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/10' :
+                                    result.riskLevel?.toLowerCase() === 'medium' ? 'border-yellow-500/50 text-yellow-400 bg-yellow-500/10' :
                                         'border-red-500/50 text-red-400 bg-red-500/10'
                                     }`}>
                                     {result.riskLevel}
@@ -190,7 +190,7 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                         </div>
 
                         {/* Visual Flags */}
-                        {result.flags.length > 0 && (
+                        {result.flags?.length > 0 && (
                             <div className="space-y-2">
                                 <span className="text-neutral-500 text-xs font-mono">DETECTED FLAGS</span>
                                 {result.flags.map((flag, idx) => (
@@ -216,7 +216,7 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-white/5 text-neutral-300">
-                                        {result.similarTrademarks.map((tm, i) => (
+                                        {result.similarTrademarks?.map((tm, i) => (
                                             <tr key={i} className="hover:bg-white/5 transition-colors group">
                                                 <td className="p-3 font-medium text-white">{tm.name}</td>
                                                 <td className="p-3 font-mono text-xs">
