@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { UploadCloud, Loader2, AlertTriangle, Shield, Activity } from 'lucide-react';
 import { analyzeLogoRisk, fileToBase64 } from '../services/geminiService';
+import { backendService } from '../services/apiService';
 
 const LogoUpload = ({ onAnalysisComplete }) => {
     const [file, setFile] = useState(null);
@@ -10,6 +11,8 @@ const LogoUpload = ({ onAnalysisComplete }) => {
 
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [result, setResult] = useState(null);
+    const [backendResult, setBackendResult] = useState(null);
+    const [showHeatmap, setShowHeatmap] = useState(false);
     const [error, setError] = useState(null);
 
     const handleFileChange = (e) => {
@@ -27,9 +30,17 @@ const LogoUpload = ({ onAnalysisComplete }) => {
         setError(null);
         try {
             const base64 = await fileToBase64(file);
-            const data = await analyzeLogoRisk(base64, brandName, "User is an MSME in the retail sector.");
-            setResult(data);
-            onAnalysisComplete(data);
+
+            // Run both analyses in parallel
+            const [geminiData, backendData] = await Promise.all([
+                analyzeLogoRisk(base64, brandName, "User is an MSME in the retail sector."),
+                backendService.analyzeLogo(file)
+            ]);
+
+            setResult(geminiData);
+            setBackendResult(backendData);
+
+            onAnalysisComplete(geminiData);
         } catch (err) {
             console.error(err);
             setError("Analysis failed. Please try again.");
@@ -53,7 +64,16 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     />
                     {preview ? (
-                        <img src={preview} alt="Preview" className="h-full w-full object-contain p-4 opacity-80" />
+                        <>
+                            <img src={preview} alt="Preview" className="h-full w-full object-contain p-4 opacity-80" />
+                            {showHeatmap && backendResult?.heatmap && (
+                                <img
+                                    src={`data:image/png;base64,${backendResult.heatmap}`}
+                                    alt="Heatmap"
+                                    className="absolute inset-0 h-full w-full object-contain p-4 opacity-70 animate-fade-in mix-blend-overlay"
+                                />
+                            )}
+                        </>
                     ) : (
                         <div className="text-center p-6 transform group-hover:scale-105 transition-transform duration-300">
                             <div className="mb-4 relative">
@@ -69,6 +89,21 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                     <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-neutral-600"></div>
                     <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-neutral-600"></div>
                     <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-neutral-600"></div>
+
+                    {/* Heatmap Toggle Control */}
+                    {backendResult?.heatmap && preview && (
+                        <div className="absolute bottom-4 right-4 z-20">
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Prevent opening file dialog
+                                    setShowHeatmap(!showHeatmap);
+                                }}
+                                className={`px-3 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-wider backdrop-blur-md transition-all border ${showHeatmap ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' : 'bg-black/40 text-neutral-400 border-white/10 hover:bg-black/60'}`}
+                            >
+                                {showHeatmap ? 'Hide Heatmap' : 'Show AI Heatmap'}
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 {/* Brand Name Input */}
@@ -125,9 +160,17 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                                 </span>
                             </div>
                             <div className="flex items-end gap-2 mb-2">
-                                <span className="text-4xl font-mono text-white">{result.riskScore}</span>
+                                <span className="text-4xl font-mono text-white">
+                                    {Math.max(result.riskScore, backendResult?.risk_score || 0)}
+                                </span>
                                 <span className="text-sm text-neutral-500 mb-1">/ 100</span>
                             </div>
+                            {backendResult?.heatmap && (
+                                <p className="text-emerald-400 text-xs font-mono mb-2 flex items-center gap-2">
+                                    <Activity className="w-3 h-3" />
+                                    <span>AI Heatmap Available (Toggle on logo preview)</span>
+                                </p>
+                            )}
                             <p className="text-neutral-300 text-sm leading-relaxed border-t border-white/5 pt-3 mt-3">
                                 {result.summary}
                             </p>
