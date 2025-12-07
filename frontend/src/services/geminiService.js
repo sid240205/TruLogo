@@ -26,6 +26,18 @@ export const fileToBase64 = (file) => {
 
 export const analyzeLogoRisk = async (imageBase64, brandName, additionalContext) => {
     try {
+        if (!apiKey) {
+            console.warn("Gemini API Key is missing. Returning mock data.");
+            return {
+                riskScore: 0,
+                riskLevel: "Low",
+                summary: "Demo Mode: API Key missing. Showing mock analysis.",
+                flags: ["Demo Mode"],
+                visualFeatures: ["None"],
+                similarTrademarks: [],
+                recommendationSummary: "Please add a valid API Key to enable real analysis."
+            };
+        }
         const model = 'gemini-2.5-flash';
 
         const prompt = `
@@ -112,6 +124,10 @@ export const analyzeLogoRisk = async (imageBase64, brandName, additionalContext)
 
 export const generateSafeLogo = async (description, style) => {
     try {
+        if (!apiKey) {
+            console.warn("Gemini API Key is missing. Cannot generate alternatives.");
+            return [];
+        }
         const prompt = `Create a professional logo for a South East Asian company with this description: ${description}. 
     Style: ${style}. 
     Ensure the logo is unique, distinctive, and avoids using generic clipart or restricted national symbols. 
@@ -148,6 +164,9 @@ export const generateSafeLogo = async (description, style) => {
 
 export const getLegalAdvice = async (riskLevel, context) => {
     try {
+        if (!apiKey) {
+            return "Unable to generate legal advice. API Key missing.";
+        }
         const prompt = `Provide detailed legal recommendations for a South East Asian (ASEAN) MSME trying to register a trademark. 
         The current risk level analyzed is: ${riskLevel}.
         Context/Issues found: ${context}.
