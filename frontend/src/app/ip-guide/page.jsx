@@ -11,6 +11,21 @@ export default function IPGuidePage() {
 
     return (
         <div className="pt-32 pb-20 px-4 max-w-7xl mx-auto min-h-screen">
+            <style jsx>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: rgba(255, 255, 255, 0.05);
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: rgba(16, 185, 129, 0.2);
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: rgba(16, 185, 129, 0.4);
+                }
+            `}</style>
             {/* Header */}
             <div className="text-center py-10 mb-10 border-b border-white/5">
                 <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono mb-4 border border-emerald-500/20">
@@ -23,7 +38,7 @@ export default function IPGuidePage() {
             <div className="flex flex-col lg:flex-row gap-12 items-start">
 
                 {/* Sidebar Navigation */}
-                <aside className="w-full lg:w-1/4 lg:sticky lg:top-32 space-y-1">
+                <aside className="w-full lg:w-1/4 lg:sticky lg:top-32 space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto pr-2 custom-scrollbar">
                     <div className="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-4 px-2">
                         Sections
                     </div>

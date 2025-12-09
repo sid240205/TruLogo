@@ -18,7 +18,7 @@ const Navbar = () => {
                 {/* Logo */}
                 <Link href="/" className="flex items-center cursor-pointer gap-3 group focus:outline-none">
                     <img src="/logo.png" alt="TruLogo" className="h-8 w-auto object-contain transition-transform group-hover:scale-105" />
-                    <span className="font-['Outfit'] font-bold text-xl tracking-tight text-white mb-0.5 group-hover:text-emerald-400 transition-colors">TruLogo</span>
+                    <span className="font-['Outfit'] font-bold text-xl tracking-tight text-white mb-0.5 group-hover:text-emerald-400 transition-colors">TRULOGO</span>
                 </Link>
 
                 {/* Desktop Nav */}
