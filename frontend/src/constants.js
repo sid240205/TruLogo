@@ -3,7 +3,7 @@ export const NAV_ITEMS = [
     { id: 'analysis', label: 'Analyze Logo', path: '/analyze' },
     { id: 'generation', label: 'Regenerate', path: '/generate' },
     { id: 'dashboard', label: 'Dashboard', path: '/dashboard' },
-    { id: 'literacy', label: 'IP Guide', path: '/literacy' },
+    { id: 'ipGuide', label: 'IP Guide', path: '/ip-guide' },
 ];
 
 export const LANGUAGES = [

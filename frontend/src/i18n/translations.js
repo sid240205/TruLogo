@@ -1,6 +1,6 @@
 export const translations = {
     English: {
-        navbar: { home: "Home", analysis: "Analyze", generation: "Generate", dashboard: "Dashboard", legal: "Legal", literacy: "Literacy", signIn: "Sign In" },
+        navbar: { home: "Home", analysis: "Analyze", generation: "Generate", dashboard: "Dashboard", legal: "Legal", ipGuide: "IP Guide", signIn: "Sign In" },
         hero: { badge: "TRULOGO INTELLIGENCE v2.0", titleLine1: "Brand Safety for the", titleLine2: "Modern Era.", subtitle: "The fastest trademark analysis engine tailored for South East Asia. Detect conflicts, visualize risk, and secure your legacy in seconds.", checkLogo: "Check Your Logo", createLogo: "Create Logo" },
         features: {
             why: "Why TruLogo?",
@@ -55,14 +55,14 @@ export const translations = {
             proTipTitle: "Pro Tip",
             proTipDesc: "For multi-country protection in SEA, consider a single filing via the Madrid System to save up to 40% on legal fees."
         },
-        literacy: {
-            title: "Knowledge Base",
-            desc: "Coming Soon."
+        ipGuide: {
+            title: "IP Guide",
+            desc: "Comprehensive guide to Intellectual Property for MSMEs."
         },
         common: { upload: "Upload", processing: "Processing...", complete: "Complete" }
     },
     Hindi: {
-        navbar: { home: "होम", analysis: "विश्लेषण", generation: "बनाएं", dashboard: "डैशबोर्ड", legal: "कानूनी", literacy: "साक्षरता", signIn: "साइन इन" },
+        navbar: { home: "होम", analysis: "विश्लेषण", generation: "बनाएं", dashboard: "डैशबोर्ड", legal: "कानूनी", ipGuide: "आईपी गाइड", signIn: "साइन इन" },
         hero: { badge: "TRULOGO इंटेलिजेंस v2.0", titleLine1: "ब्रांड सुरक्षा", titleLine2: "आधुनिक युग के लिए।", subtitle: "दक्षिण पूर्व एशिया के लिए सबसे तेज़ ट्रेडमार्क विश्लेषण इंजन। संघर्षों का पता लगाएं, जोखिम की कल्पना करें और सेकंडों में अपनी विरासत सुरक्षित करें।", checkLogo: "अपना लोगो चेक करें", createLogo: "लोगो बनाएं" },
         features: {
             why: "TruLogo क्यों?",
@@ -117,14 +117,14 @@ export const translations = {
             proTipTitle: "प्रो टिप",
             proTipDesc: "SEA में बहु-देशीय सुरक्षा के लिए, कानूनी शुल्क पर 40% तक बचाने के लिए मैड्रिड सिस्टम के माध्यम से एक एकल फाइलिंग पर विचार करें।"
         },
-        literacy: {
-            title: "ज्ञान आधार",
-            desc: "जल्द आ रहा है।"
+        ipGuide: {
+            title: "आईपी गाइड",
+            desc: "MSMEs के लिए बौद्धिक संपदा के लिए व्यापक गाइड।"
         },
         common: { upload: "अपलोड", processing: "प्रोसेसिंग...", complete: "पूर्ण" }
     },
     Bengali: {
-        navbar: { home: "হোম", analysis: "বিশ্লেষণ", generation: "তৈরি করুন", dashboard: "ড্যাশবোর্ড", legal: "আইনি", literacy: "সাক্ষরতা", signIn: "সাইন ইন" },
+        navbar: { home: "হোম", analysis: "বিশ্লেষণ", generation: "তৈরি করুন", dashboard: "ড্যাশবোর্ড", legal: "আইনি", ipGuide: "আইপি গাইড", signIn: "সাইন ইন" },
         hero: { badge: "TRULOGO ইন্টেলিজেন্স v2.0", titleLine1: "ব্র্যান্ড সুরক্ষা", titleLine2: "আধুনিক যুগের জন্য।", subtitle: "দক্ষিণ পূর্ব এশিয়ার জন্য দ্রুততম ট্রেডমার্ক বিশ্লেষণ इंजन। দ্বন্দ্ব সনাক্ত করুন, ঝুঁকি কল্পনা করুন এবং কয়েক সেকেন্ডে আপনার উত্তরাধিকার সুরক্ষিত করুন।", checkLogo: "আপনার লোগো চেক করুন", createLogo: "লোগো তৈরি করুন" },
         features: {
             why: "TruLogo কেন?",
@@ -179,14 +179,14 @@ export const translations = {
             proTipTitle: "প্রো টিপ",
             proTipDesc: "SEA-তে বহু-দেশ সুরক্ষার জন্য, আইনি ফি-তে ৪০% পর্যন্ত বাঁচাতে মাদ্রিদ সিস্টেমের মাধ্যমে একটি ফাইল করার কথা বিবেচনা করুন।"
         },
-        literacy: {
-            title: "জ্ঞান ভান্ডার",
-            desc: "শীঘ্রই আসছে।"
+        ipGuide: {
+            title: "আইপি গাইড",
+            desc: "MSME-এর জন্য মেধা সম্পদের ব্যাপক নির্দেশিকা।"
         },
         common: { upload: "আপলোডের", processing: "প্রক্রিয়াকরণ...", complete: "সম্পন্ন" }
     },
     Nepali: {
-        navbar: { home: "गृहपृष्ठ", analysis: "विश्लेषण", generation: "सिर्जना गर्नुहोस्", dashboard: "ड्यासबोर्ड", legal: "कानूनी", literacy: "साक्षरता", signIn: "साइन इन" },
+        navbar: { home: "गृहपृष्ठ", analysis: "विश्लेषण", generation: "सिर्जना गर्नुहोस्", dashboard: "ड्यासबोर्ड", legal: "कानूनी", ipGuide: "आईपी गाइड", signIn: "साइन इन" },
         hero: { badge: "TRULOGO इन्टेलिजेन्स v2.0", titleLine1: "ब्रान्ड सुरक्षा", titleLine2: "आधुनिक युगको लागि।", subtitle: "दक्षिण पूर्व एशियाका लागि सबैभन्दा छिटो ट्रेडमार्क विश्लेषण इन्जिन। द्वन्द्व पत्ता लगाउनुहोस्, जोखिम कल्पना गर्नुहोस् र सेकेन्डमा आफ्नो विरासत सुरक्षित गर्नुहोस्।", checkLogo: "तपाईंको लोगो जाँच गर्नुहोस्", createLogo: "लोगो सिर्जना गर्नुहोस्" },
         features: {
             why: "TruLogo किन?",
@@ -241,14 +241,14 @@ export const translations = {
             proTipTitle: "प्रो टिप",
             proTipDesc: "SEA मा बहु-देशीय सुरक्षाको लागि, कानूनी शुल्कमा ४०% सम्म बचत गर्न म्याड्रिड प्रणाली मार्फत एकल फाइलिङ विचार गर्नुहोस्।"
         },
-        literacy: {
-            title: "ज्ञान आधार",
-            desc: "चाँडै आउँदैछ।"
+        ipGuide: {
+            title: "आईपी गाइड",
+            desc: "MSMEs का लागि बौद्धिक सम्पत्ति व्यापक गाइड।"
         },
         common: { upload: "अपलोड", processing: "प्रशोधन गर्दै...", complete: "पूरा भयो" }
     },
     Pashto: {
-        navbar: { home: "کور", analysis: "تحلیل", generation: "تولید", dashboard: "ډشبورډ", legal: "قانوني", literacy: "لیک لوست", signIn: "ننوتل" },
+        navbar: { home: "کور", analysis: "تحلیل", generation: "تولید", dashboard: "ډشبورډ", legal: "قانوني", ipGuide: "د IP لارښود", signIn: "ننوتل" },
         hero: { badge: "TRULOGO استخبارات v2.0", titleLine1: "د نښې خوندیتوب", titleLine2: "د عصري دور لپاره.", subtitle: "د سویل ختیځ آسیا لپاره د سوداګریزې نښې ترټولو ګړندی تحلیل انجن. شخړې کشف کړئ، خطر وګورئ، او په ثانیو کې خپل میراث خوندي کړئ.", checkLogo: "خپل لوګو وګورئ", createLogo: "لوګو جوړ کړئ" },
         features: {
             why: "ولې TruLogo؟",
@@ -303,9 +303,9 @@ export const translations = {
             proTipTitle: "پرو لارښوونه",
             proTipDesc: "په SEA کې د څو هیوادونو محافظت لپاره، د مادرید سیسټم له لارې یو واحد دوسیه په پام کې ونیسئ ترڅو په قانوني فیسونو کې تر 40٪ پورې سپما وکړئ."
         },
-        literacy: {
-            title: "د پوهې اساس",
-            desc: "ژر راځي."
+        ipGuide: {
+            title: "د IP لارښود",
+            desc: "د MSMEs لپاره د فکري ملکیت جامع لارښود."
         },
         common: { upload: "اپلوډ", processing: "پروسس کول...", complete: "کامل" }
     }
