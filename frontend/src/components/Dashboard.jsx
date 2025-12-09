@@ -2,6 +2,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { CheckCircle, AlertTriangle, Clock, ArrowUpRight } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const MOCK_CHART_DATA = [
     { name: 'Jan', score: 65 },
@@ -13,16 +14,17 @@ const MOCK_CHART_DATA = [
 ];
 
 const Dashboard = () => {
+    const { t } = useLanguage();
     return (
         <div className="space-y-8 animate-fade-in">
             <div className="flex items-end justify-between border-b border-white/10 pb-6">
                 <div>
-                    <h2 className="text-3xl font-serif text-white mb-2">Command Center</h2>
-                    <p className="text-neutral-400">Real-time intellectual property monitoring.</p>
+                    <h2 className="text-3xl font-serif text-white mb-2">{t('dashboard.title')}</h2>
+                    <p className="text-neutral-400">{t('dashboard.subtitle')}</p>
                 </div>
                 <div className="text-right">
-                    <div className="text-xs text-neutral-500 font-mono uppercase mb-1">Last Updated</div>
-                    <div className="text-white font-mono">Just Now</div>
+                    <div className="text-xs text-neutral-500 font-mono uppercase mb-1">{t('dashboard.lastUpdated')}</div>
+                    <div className="text-white font-mono">{t('dashboard.justNow')}</div>
                 </div>
             </div>
 
@@ -37,7 +39,7 @@ const Dashboard = () => {
                         <span className="text-emerald-400 text-xs font-bold bg-emerald-500/10 px-2 py-1 rounded">+12%</span>
                     </div>
                     <h3 className="text-4xl font-mono text-white mb-1">12</h3>
-                    <p className="text-sm text-neutral-500">Safe Scans</p>
+                    <p className="text-sm text-neutral-500">{t('dashboard.stats.safeScans')}</p>
                 </div>
                 <div className="glass-panel p-6 rounded-2xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
@@ -48,7 +50,7 @@ const Dashboard = () => {
                         <span className="text-neutral-500 text-xs">Action Req</span>
                     </div>
                     <h3 className="text-4xl font-mono text-white mb-1">3</h3>
-                    <p className="text-sm text-neutral-500">Risk Alerts</p>
+                    <p className="text-sm text-neutral-500">{t('dashboard.stats.riskAlerts')}</p>
                 </div>
                 <div className="glass-panel p-6 rounded-2xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
@@ -59,14 +61,14 @@ const Dashboard = () => {
                         <ArrowUpRight className="w-4 h-4 text-neutral-600" />
                     </div>
                     <h3 className="text-4xl font-mono text-white mb-1">1</h3>
-                    <p className="text-sm text-neutral-500">Pending Filings</p>
+                    <p className="text-sm text-neutral-500">{t('dashboard.stats.pendingFilings')}</p>
                 </div>
             </div>
 
             {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="glass-panel p-8 rounded-2xl">
-                    <h3 className="text-lg text-white font-medium mb-6">Brand Health Trend</h3>
+                    <h3 className="text-lg text-white font-medium mb-6">{t('dashboard.brandHealth')}</h3>
                     <div className="h-64 w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={MOCK_CHART_DATA}>
@@ -90,7 +92,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="glass-panel p-8 rounded-2xl">
-                    <h3 className="text-lg text-white font-medium mb-6">Recent Log</h3>
+                    <h3 className="text-lg text-white font-medium mb-6">{t('dashboard.recentLog')}</h3>
                     <div className="space-y-1">
                         {[
                             { action: "Scan: 'TechNova'", date: "2h ago", status: "SAFE", color: "text-emerald-400" },

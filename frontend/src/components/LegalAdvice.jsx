@@ -2,9 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { Scale, FileText, ExternalLink, ShieldAlert } from 'lucide-react';
 import { getLegalAdvice } from '../services/geminiService';
+import { useLanguage } from '../context/LanguageContext';
 import ReactMarkdown from 'react-markdown';
 
 const LegalAdvice = ({ lastResult }) => {
+    const { t } = useLanguage();
     const [advice, setAdvice] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -30,8 +32,8 @@ const LegalAdvice = ({ lastResult }) => {
                     <Scale size={200} />
                 </div>
                 <div className="relative z-10">
-                    <h2 className="text-3xl font-serif text-white mb-2">Legal Intelligence</h2>
-                    <p className="text-neutral-400">Automated counsel for the ASEAN market.</p>
+                    <h2 className="text-3xl font-serif text-white mb-2">{t('legal.title')}</h2>
+                    <p className="text-neutral-400">{t('legal.subtitle')}</p>
                 </div>
             </div>
 
@@ -39,7 +41,7 @@ const LegalAdvice = ({ lastResult }) => {
                 <div className="md:col-span-2 glass-panel p-8 rounded-3xl">
                     <div className="flex items-center gap-3 mb-6 border-b border-white/10 pb-4">
                         <ShieldAlert className="text-emerald-500" />
-                        <h3 className="text-lg font-medium text-white">Strategic Directive</h3>
+                        <h3 className="text-lg font-medium text-white">{t('legal.directive')}</h3>
                     </div>
 
                     {loading ? (
@@ -59,7 +61,7 @@ const LegalAdvice = ({ lastResult }) => {
                 <div className="space-y-6">
                     <div className="glass-panel p-6 rounded-3xl">
                         <h4 className="font-bold font-mono text-xs text-neutral-500 uppercase mb-4 tracking-wider">
-                            Official Databases
+                            {t('legal.databases')}
                         </h4>
                         <ul className="space-y-4 text-sm text-neutral-300">
                             <li className="flex items-start gap-3 hover:text-white cursor-pointer group transition-colors">
@@ -78,9 +80,9 @@ const LegalAdvice = ({ lastResult }) => {
                     </div>
 
                     <div className="bg-gradient-to-br from-emerald-900/50 to-transparent p-6 rounded-3xl border border-emerald-500/20">
-                        <h4 className="font-bold text-white mb-2 text-sm">Pro Tip</h4>
+                        <h4 className="font-bold text-white mb-2 text-sm">{t('legal.proTipTitle')}</h4>
                         <p className="text-xs text-neutral-400 leading-relaxed">
-                            For multi-country protection in SEA, consider a single filing via the Madrid System to save up to 40% on legal fees.
+                            {t('legal.proTipDesc')}
                         </p>
                     </div>
                 </div>
