@@ -62,6 +62,32 @@ h4 {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+/* Custom Scrollbar for IP Guide Sidebar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16, 185, 129, 0.4) rgba(255, 255, 255, 0.05);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  /* Increased from 4px for better usability */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.4);
+  /* Increased opacity */
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.6);
+}
+
 @theme {
   --color-background: #0a0a0a;
   --color-surface: #171717;

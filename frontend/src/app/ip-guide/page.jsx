@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
 import { IP_GUIDE_CONTENT } from './content';
-import { BookOpen, Scale, AlertTriangle, ShieldCheck, ChevronRight, Hash, FileText } from 'lucide-react';
+import { BookOpen, AlertTriangle, ChevronRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 export default function IPGuidePage() {
@@ -11,21 +11,7 @@ export default function IPGuidePage() {
 
     return (
         <div className="pt-32 pb-20 px-4 max-w-7xl mx-auto min-h-screen">
-            <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 4px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: rgba(255, 255, 255, 0.05);
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: rgba(16, 185, 129, 0.2);
-                    border-radius: 10px;
-                }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                    background: rgba(16, 185, 129, 0.4);
-                }
-            `}</style>
+
             {/* Header */}
             <div className="text-center py-10 mb-10 border-b border-white/5">
                 <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-mono mb-4 border border-emerald-500/20">
