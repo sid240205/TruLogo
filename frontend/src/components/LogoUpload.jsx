@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import { UploadCloud, Loader2, AlertTriangle, Shield, Activity, ArrowRight } from 'lucide-react';
 import { analyzeLogoRisk, fileToBase64 } from '../services/geminiService';
+import { useLanguage } from '../context/LanguageContext';
 import { backendService } from '../services/apiService';
 
 const LogoUpload = ({ onAnalysisComplete }) => {
+    const { t } = useLanguage();
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState(null);
     const [brandName, setBrandName] = useState('');
@@ -83,8 +85,8 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                                 <div className="absolute inset-0 bg-emerald-500 blur-xl opacity-0 group-hover:opacity-20 transition-opacity rounded-full"></div>
                                 <UploadCloud className="w-12 h-12 text-neutral-400 mx-auto relative z-10 group-hover:text-emerald-500 transition-colors" />
                             </div>
-                            <p className="text-white text-lg font-medium mb-1">ADD LOGO HERE</p>
-                            <p className="text-neutral-500 text-xs font-mono">PNG, JPG, WEBP</p>
+                            <p className="text-white text-lg font-medium mb-1">{t('analyze.title')}</p>
+                            <p className="text-neutral-500 text-xs font-mono">{t('analyze.subtitle')}</p>
                         </div>
                     )}
                     {/* Decoration lines */}
@@ -102,11 +104,11 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                                     setShowHeatmap(!showHeatmap);
                                 }}
                                 className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all shadow-lg border backdrop-blur-md ${showHeatmap
-                                        ? 'bg-emerald-500 text-black border-emerald-400 hover:bg-emerald-400'
-                                        : 'bg-neutral-900/90 text-white border-white/20 hover:bg-black hover:border-white/40'
+                                    ? 'bg-emerald-500 text-black border-emerald-400 hover:bg-emerald-400'
+                                    : 'bg-neutral-900/90 text-white border-white/20 hover:bg-black hover:border-white/40'
                                     }`}
                             >
-                                {showHeatmap ? 'Hide Heatmap' : 'Show Heatmap'}
+                                {showHeatmap ? t('analyze.toggleHeatmapOff') : t('analyze.toggleHeatmapOn')}
                             </button>
                         </div>
                     )}
@@ -118,7 +120,7 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                         type="text"
                         value={brandName}
                         onChange={(e) => setBrandName(e.target.value)}
-                        placeholder="Enter Brand Name"
+                        placeholder={t('analyze.inputPlaceholder')}
                         className="w-full bg-background border border-border rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-emerald-500 transition-colors font-mono placeholder:text-neutral-600"
                     />
                 </div>
@@ -134,9 +136,9 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                             }`}
                     >
                         {isAnalyzing ? (
-                            <><Loader2 className="animate-spin w-4 h-4" /> Processing...</>
+                            <><Loader2 className="animate-spin w-4 h-4" /> {t('analyze.loading')}</>
                         ) : (
-                            'Run Analysis'
+                            t('analyze.button')
                         )}
                     </button>
                     {error && <p className="text-red-500 text-xs mt-2 text-center font-mono">{error}</p>}
@@ -149,7 +151,7 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                 <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
 
                 <h3 className="text-white font-medium text-sm tracking-wider uppercase opacity-70 mb-6 flex items-center gap-2">
-                    <Activity className="w-4 h-4" /> Analysis Output
+                    <Activity className="w-4 h-4" /> {t('analyze.outputTitle')}
                 </h3>
 
                 {result ? (
@@ -157,9 +159,9 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                         {/* Summary Block */}
                         <div className="border border-white/10 bg-white/5 rounded-lg p-4 backdrop-blur-md">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-neutral-400 text-xs font-mono">RISK LEVEL</span>
-                                <span className={`text-xs font-bold px-2 py-1 rounded border ${result.riskLevel === 'Low' ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/10' :
-                                    result.riskLevel === 'Medium' ? 'border-yellow-500/50 text-yellow-400 bg-yellow-500/10' :
+                                <span className="text-neutral-400 text-xs font-mono">{t('analyze.riskLevel')}</span>
+                                <span className={`text-xs font-bold px-2 py-1 rounded border uppercase ${result.riskLevel?.toLowerCase() === 'low' ? 'border-emerald-500/50 text-emerald-400 bg-emerald-500/10' :
+                                    result.riskLevel?.toLowerCase() === 'medium' ? 'border-yellow-500/50 text-yellow-400 bg-yellow-500/10' :
                                         'border-red-500/50 text-red-400 bg-red-500/10'
                                     }`}>
                                     {result.riskLevel}
@@ -175,12 +177,12 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                                 {backendResult?.heatmap ? (
                                     <p className="text-emerald-400 text-xs font-mono flex items-center gap-2">
                                         <Activity className="w-3 h-3" />
-                                        <span>Heatmap Available (Toggle on logo preview)</span>
+                                        <span>{t('analyze.heatmapAvailable')}</span>
                                     </p>
                                 ) : (
                                     <p className="text-neutral-500 text-xs font-mono flex items-center gap-2 opacity-70">
                                         <Activity className="w-3 h-3" />
-                                        <span>Heatmap Not Available</span>
+                                        <span>{t('analyze.heatmapUnavailable')}</span>
                                     </p>
                                 )}
                             </div>
@@ -190,9 +192,9 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                         </div>
 
                         {/* Visual Flags */}
-                        {result.flags.length > 0 && (
+                        {result.flags?.length > 0 && (
                             <div className="space-y-2">
-                                <span className="text-neutral-500 text-xs font-mono">DETECTED FLAGS</span>
+                                <span className="text-neutral-500 text-xs font-mono">{t('analyze.detectedFlags')}</span>
                                 {result.flags.map((flag, idx) => (
                                     <div key={idx} className="flex items-center gap-2 text-sm text-red-300 bg-red-950/20 border border-red-900/30 px-3 py-2 rounded">
                                         <AlertTriangle className="w-3 h-3 text-red-500" />
@@ -204,19 +206,19 @@ const LogoUpload = ({ onAnalysisComplete }) => {
 
                         {/* Matches Table Style */}
                         <div>
-                            <span className="text-neutral-500 text-xs font-mono block mb-2">GLOBAL TRADEMARK DATABASE MATCHES</span>
+                            <span className="text-neutral-500 text-xs font-mono block mb-2">{t('analyze.globalMatches')}</span>
                             <div className="border border-white/10 rounded-lg overflow-hidden text-sm">
                                 <table className="w-full text-left">
                                     <thead className="bg-white/5 text-neutral-400 font-mono text-xs">
                                         <tr>
-                                            <th className="p-3 font-normal">ENTITY</th>
-                                            <th className="p-3 font-normal">SIMILARITY</th>
-                                            <th className="p-3 font-normal">STATUS</th>
-                                            <th className="p-3 font-normal">ACTION</th>
+                                            <th className="p-3 font-normal">{t('analyze.table.entity')}</th>
+                                            <th className="p-3 font-normal">{t('analyze.table.similarity')}</th>
+                                            <th className="p-3 font-normal">{t('analyze.table.status')}</th>
+                                            <th className="p-3 font-normal">{t('analyze.table.action')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-white/5 text-neutral-300">
-                                        {result.similarTrademarks.map((tm, i) => (
+                                        {result.similarTrademarks?.map((tm, i) => (
                                             <tr key={i} className="hover:bg-white/5 transition-colors group">
                                                 <td className="p-3 font-medium text-white">{tm.name}</td>
                                                 <td className="p-3 font-mono text-xs">
@@ -233,7 +235,7 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                                                         rel="noopener noreferrer"
                                                         className="text-xs text-blue-400 hover:text-blue-300 hover:underline flex items-center gap-1 opacity-100 transition-opacity"
                                                     >
-                                                        View <ArrowRight className="w-3 h-3" />
+                                                        {t('analyze.table.view')} <ArrowRight className="w-3 h-3" />
                                                     </a>
                                                 </td>
                                             </tr>
@@ -249,8 +251,8 @@ const LogoUpload = ({ onAnalysisComplete }) => {
                             <Shield className="w-10 h-10 text-neutral-500" />
                         </div>
                         <div className="text-center">
-                            <p className="font-mono text-sm text-neutral-400 tracking-widest mb-2">WAITING FOR INPUT...</p>
-                            <p className="text-xs text-neutral-600 max-w-[200px] mx-auto">Upload a logo to begin the AI trademark safety scan.</p>
+                            <p className="font-mono text-sm text-neutral-400 tracking-widest mb-2">{t('analyze.waiting')}</p>
+                            <p className="text-xs text-neutral-600 max-w-[200px] mx-auto">{t('analyze.waitingDesc')}</p>
                         </div>
                     </div>
                 )}

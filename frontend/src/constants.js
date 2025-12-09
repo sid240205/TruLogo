@@ -8,8 +8,8 @@ export const NAV_ITEMS = [
 
 export const LANGUAGES = [
     { code: 'en', label: 'English' },
-    { code: 'id', label: 'Bahasa Indonesia' },
-    { code: 'vi', label: 'Tiếng Việt' },
-    { code: 'th', label: 'Thai' },
-    { code: 'ms', label: 'Malay' },
+    { code: 'hi', label: 'Hindi' },
+    { code: 'bn', label: 'Bengali' },
+    { code: 'ne', label: 'Nepali' },
+    { code: 'ps', label: 'Pashto' },
 ];
