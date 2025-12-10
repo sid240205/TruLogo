@@ -22,6 +22,9 @@ app.include_router(dashboard.router, prefix="/api/v1")
 from app.api import search
 app.include_router(search.router, prefix="/api/v1")
 
+from app.api.endpoints import generate
+app.include_router(generate.router, prefix="/api/v1")
+
 @app.on_event("startup")
 async def startup():
     async with engine.begin() as conn:
