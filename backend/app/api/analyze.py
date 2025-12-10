@@ -14,61 +14,127 @@ router = APIRouter()
 @router.post("/analyze/logo")
 async def analyze_logo(file: UploadFile = File(...)):
     try:
+        # Read file content
         content = await file.read()
         
-        # 1. Basic AI Analysis (Existing)
-        embedding = embedding_service.get_image_embedding(content)
+        # --- Layer 1: Preprocessing ---
+        # Note: We use the raw bytes for some services to avoid re-encoding loss, 
+        # but PreprocessingService ensures we can handle the image format.
+        # In a full pipeline, we might save the preprocessed image to a temp file here.
+        from app.services.preprocessing_service import preprocessing_service
+        # Verify image is valid
+        preprocessing_service.preprocess(content)
+
+        # --- Layer 2: Visual Fingerprinting ---
+        # Generate pHash for duplicate detection
         phash = embedding_service.get_phash(content)
+        
+        # --- Layer 3: Deep Visual Semantic Analysis (CLIP) ---
+        # Generate CLIP embedding
+        image_embedding = embedding_service.get_image_embedding(content)
+        # Search vector store for visual matches
+        visual_matches = vector_store.search_image(image_embedding)
+        
+        # Generate Heatmap (Visual Interpretation)
         heatmap_b64 = heatmap_service.generate_heatmap(content)
-        results = vector_store.search_image(embedding)
         
-        # 2. Metadata Extraction
+        # --- Layer 4: Textual & Semantic Analysis (OCR + SBERT) ---
+        from app.services.ocr_service import ocr_service
+        # Extract text from logo
+        extracted_text_image = Image.open(io.BytesIO(content))
+        detected_text = ocr_service.extract_text(extracted_text_image)
+        
+        text_matches = []
+        text_score = 0
+        if detected_text:
+            # Generate SBERT embedding for extracted text
+            text_embedding = embedding_service.get_text_embedding(detected_text)
+            # Search vector store for text matches
+            text_matches = vector_store.search_text(text_embedding)
+            
+            # Calculate simple text score (max similarity found)
+            if text_matches:
+                # Convert distance to similarity roughly
+                # Distances are L2. Lower is better. 
+                # Very rough approximation for now.
+                best_text_dist = text_matches[0]['score']
+                text_score = max(0, (1 - best_text_dist) * 100) # heuristic
+        
+        # --- Layer 5: Risk & Legal Scoring ---
+        # Metadata
         metadata = metadata_service.extract_metadata(content, file.filename)
+        metadata['ocr_text'] = detected_text
         
-        # 3. Safety Checks
+        # Safety
         safety_results = safety_service.check_safety(metadata)
         
-        # 4. Risk Calculation
-        risk_score = 0
-        similar_marks = []
+        # Check for pHash match (duplicate)
+        # We need to check if any visual match is a "duplicate"
+        # Since vector store returns L2 distance, we can't directly compare pHash there 
+        # unless stored. For now, we trust the Vector Score for similarity, 
+        # but in a real DB we'd query by pHash. 
+        # Let's assume high vector similarity (> 0.95 approx) implies duplicate for now.
+        # Visual matches: score is L2 distance. 
+        # similarity = 1 - (dist / 2)
         
-        if results:
-            min_distance = results[0]['score']
-            similarity = 1 - (min_distance / 2)
-            raw_score = max(0, similarity * 100)
-            
-            # Stricter Risk Assessment
-            if similarity > 0.20:
-                 risk_score = 50 + ((similarity - 0.20) / 0.80) * 50
-            else:
-                 risk_score = raw_score
-            
-            # Process all results
-            for res in results:
-                dist = res['score']
-                sim = 1 - (dist / 2)
-                res['similarity'] = max(0, sim)
-                similar_marks.append(res)
+        best_visual_sim = 0
+        phash_match = False
         
-        # Adjust risk based on safety flags
-        if not safety_results['is_safe']:
-            risk_score = max(risk_score, 85) # High risk if safety flags are critical
-
-        # 5. Legal Remedy
-        remedy = remedy_engine.get_remedy(risk_score, safety_results)
+        processed_matches = []
+        if visual_matches:
+            min_dist = visual_matches[0]['score']
+            best_visual_sim = max(0, (1 - (min_dist / 2)) * 100)
+            
+            if best_visual_sim > 90:
+                phash_match = True # Approximate "exact match" logic
+                
+            for res in visual_matches:
+                sim = max(0, (1 - (res['score'] / 2)) * 100)
+                res['similarity'] = round(sim, 2)
+                res['type'] = 'visual'
+                processed_matches.append(res)
+                
+        # Combine text matches
+        for res in text_matches:
+             # Heuristic conversion for text
+             sim = max(0, (1 - res['score']) * 100) 
+             res['similarity'] = round(sim, 2)
+             res['type'] = 'text'
+             processed_matches.append(res)
+             
+        # Sort all matches by similarity
+        processed_matches.sort(key=lambda x: x['similarity'], reverse=True)
+        
+        # Calculate Risk
+        from app.services.risk_engine import risk_engine
+        
+        risk_result = risk_engine.calculate_risk(
+            visual_similarity_score=best_visual_sim,
+            text_similarity_score=text_score,
+            phash_match=phash_match,
+            safety_flags=safety_results
+        )
+        
+        remedy = remedy_engine.get_remedy(risk_result['score'], safety_results)
 
         return {
             "filename": file.filename,
-            "risk_score": round(risk_score, 2),
+            "risk_score": risk_result['score'],
+            "risk_level": risk_result['level'],
+            "risk_factors": risk_result['factors'],
+            "risk_breakdown": risk_result['breakdown'],
             "phash": phash,
             "heatmap": heatmap_b64,
-            "similar_marks": similar_marks,
+            "detected_text": detected_text,
+            "similar_marks": processed_matches[:5], # Top 5 mixed
             "metadata": metadata,
             "safety": safety_results,
             "remedy": remedy
         }
     except Exception as e:
         print(f"Error in analyze_logo: {e}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/generate/logo")

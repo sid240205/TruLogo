@@ -2,6 +2,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { CheckCircle, AlertTriangle, Clock, ArrowUpRight } from 'lucide-react';
+import { storageService } from '../services/storageService';
 import { useLanguage } from '../context/LanguageContext';
 
 const MOCK_CHART_DATA = [
@@ -15,6 +16,24 @@ const MOCK_CHART_DATA = [
 
 const Dashboard = () => {
     const { t } = useLanguage();
+    const [stats, setStats] = useState({ safeScans: 0, riskAlerts: 0, pendingFilings: 0 });
+    const [recentLogs, setRecentLogs] = useState([]);
+
+    // Load initial data
+    React.useEffect(() => {
+        const loadData = () => {
+            const data = storageService.getDashboardData();
+            setStats(data.stats);
+            setRecentLogs(data.recentLogs);
+        };
+
+        loadData();
+
+        // Listen for updates
+        window.addEventListener('dashboard-updated', loadData);
+        return () => window.removeEventListener('dashboard-updated', loadData);
+    }, []);
+
     return (
         <div className="space-y-8 animate-fade-in">
             <div className="flex items-end justify-between border-b border-white/10 pb-6">
@@ -38,7 +57,7 @@ const Dashboard = () => {
                         </div>
                         <span className="text-emerald-400 text-xs font-bold bg-emerald-500/10 px-2 py-1 rounded">+12%</span>
                     </div>
-                    <h3 className="text-4xl font-mono text-white mb-1">12</h3>
+                    <h3 className="text-4xl font-mono text-white mb-1">{stats.safeScans}</h3>
                     <p className="text-sm text-neutral-500">{t('dashboard.stats.safeScans')}</p>
                 </div>
                 <div className="glass-panel p-6 rounded-2xl relative overflow-hidden">
@@ -49,7 +68,7 @@ const Dashboard = () => {
                         </div>
                         <span className="text-neutral-500 text-xs">Action Req</span>
                     </div>
-                    <h3 className="text-4xl font-mono text-white mb-1">3</h3>
+                    <h3 className="text-4xl font-mono text-white mb-1">{stats.riskAlerts}</h3>
                     <p className="text-sm text-neutral-500">{t('dashboard.stats.riskAlerts')}</p>
                 </div>
                 <div className="glass-panel p-6 rounded-2xl relative overflow-hidden">
@@ -60,7 +79,7 @@ const Dashboard = () => {
                         </div>
                         <ArrowUpRight className="w-4 h-4 text-neutral-600" />
                     </div>
-                    <h3 className="text-4xl font-mono text-white mb-1">1</h3>
+                    <h3 className="text-4xl font-mono text-white mb-1">{stats.pendingFilings}</h3>
                     <p className="text-sm text-neutral-500">{t('dashboard.stats.pendingFilings')}</p>
                 </div>
             </div>
@@ -94,27 +113,28 @@ const Dashboard = () => {
                 <div className="glass-panel p-8 rounded-2xl">
                     <h3 className="text-lg text-white font-medium mb-6">{t('dashboard.recentLog')}</h3>
                     <div className="space-y-1">
-                        {[
-                            { action: "Scan: 'TechNova'", date: "2h ago", status: "SAFE", color: "text-emerald-400" },
-                            { action: "Gen: 'EcoCafe'", date: "1d ago", status: "DONE", color: "text-blue-400" },
-                            { action: "Scan: 'RedCross'", date: "2d ago", status: "CRITICAL", color: "text-red-400" },
-                            { action: "File: 'Orbit'", date: "3d ago", status: "PENDING", color: "text-neutral-400" },
-                        ].map((item, idx) => (
-                            <div key={idx} className="flex items-center justify-between p-4 rounded-lg hover:bg-white/5 transition-colors border border-transparent hover:border-white/5 group">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-white/20 group-hover:bg-emerald-500 transition-colors"></div>
-                                    <div>
-                                        <p className="font-mono text-sm text-neutral-300">{item.action}</p>
+                        {recentLogs.length > 0 ? (
+                            recentLogs.map((item, idx) => (
+                                <div key={idx} className="flex items-center justify-between p-4 rounded-lg hover:bg-white/5 transition-colors border border-transparent hover:border-white/5 group">
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-1.5 h-1.5 rounded-full bg-white/20 group-hover:bg-emerald-500 transition-colors ${item.status === 'CRITICAL' ? 'bg-red-500' : ''}`}></div>
+                                        <div>
+                                            <p className="font-mono text-sm text-neutral-300">{item.action}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-xs text-neutral-600 font-mono">{item.date}</span>
+                                        <span className={`text-xs font-bold font-mono ${item.color}`}>
+                                            {item.status}
+                                        </span>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <span className="text-xs text-neutral-600 font-mono">{item.date}</span>
-                                    <span className={`text-xs font-bold font-mono ${item.color}`}>
-                                        {item.status}
-                                    </span>
-                                </div>
+                            ))
+                        ) : (
+                            <div className="text-center text-neutral-600 text-sm py-10 font-mono italic">
+                                No recent activity. Start by analyzing a logo.
                             </div>
-                        ))}
+                        )}
                     </div>
                 </div>
             </div>
