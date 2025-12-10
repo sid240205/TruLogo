@@ -4,6 +4,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { IP_GUIDE_CONTENT } from './content';
 import { BookOpen, AlertTriangle, ChevronRight } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import IPGuideChatbot from '../../components/IPGuideChatbot';
 
 export default function IPGuidePage() {
     const { t } = useLanguage();
@@ -85,6 +86,9 @@ export default function IPGuidePage() {
                     <AlertTriangle size={14} /> Disclaimer: This guide is for informational purposes only and does not constitute legal advice.
                 </p>
             </div>
+
+            {/* Chatbot */}
+            <IPGuideChatbot />
         </div>
     );
 }

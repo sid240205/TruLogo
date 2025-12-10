@@ -15,6 +15,8 @@ app.add_middleware(
 from app.api import analyze
 
 app.include_router(analyze.router, prefix="/api/v1")
+from app.api import search
+app.include_router(search.router, prefix="/api/v1")
 
 @app.get("/")
 async def root():

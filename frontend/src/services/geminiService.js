@@ -188,3 +188,49 @@ export const getLegalAdvice = async (riskLevel, context) => {
         return "Unable to generate legal advice at this time.";
     }
 }
+// ... existing code ...
+
+export const chatWithIPGuide = async (userQuery, context) => {
+    try {
+        if (!apiKey) {
+            return "Starting chat in demo mode. Please provide an API key for full functionality.";
+        }
+
+        const model = 'gemini-2.5-flash';
+
+        // Construct a context-aware prompt
+        const prompt = `
+            You are an expert Intellectual Property (IP) Guide Assistant for the ASEAN region.
+            Your goal is to answer the user's question clearly and accurately, using the provided context from our knowledge base.
+
+            Context from Knowledge Base:
+            ${context ? context : "No specific context available."}
+
+            User Question:
+            "${userQuery}"
+
+            Instructions:
+            1. Use the provided context to answer the question if relevant.
+            2. If the context doesn't contain the answer, use your general knowledge but mention that this is general advice.
+            3. Keep the tone professional, helpful, and accessible (TMEx style).
+            4. If the question is about the tool/platform itself, answer based on what you know about TruLogo (an AI-powered trademark search tool).
+            5. Always include a brief disclaimer that this is not legal advice.
+        `;
+
+        const response = await ai.models.generateContent({
+            model,
+            contents: {
+                parts: [{ text: prompt }]
+            }
+        });
+
+        if (response.text) {
+            return response.text;
+        }
+        throw new Error("No response from Gemini");
+
+    } catch (error) {
+        console.error("Chat Error:", error);
+        return "I'm having trouble connecting right now. Please try again later.";
+    }
+};
