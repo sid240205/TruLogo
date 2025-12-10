@@ -12,4 +12,5 @@ export const LANGUAGES = [
     { code: 'bn', label: 'Bengali' },
     { code: 'ne', label: 'Nepali' },
     { code: 'ps', label: 'Pashto' },
+    { code: 'ta', label: 'Tamil' },
 ];
