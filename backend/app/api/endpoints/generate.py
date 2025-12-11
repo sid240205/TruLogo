@@ -16,11 +16,12 @@ class LogoGenRequest(BaseModel):
 
 @router.post("/generate/logo")
 async def generate_logo(
-    business_name: str = Form(...),
-    business_description: str = Form(...),
-    business_type: str = Form("none"),
-    color: str = Form("none")
+    request: LogoGenRequest
 ):
+    business_name = request.business_name
+    business_description = request.business_description
+    business_type = request.business_type
+    color = request.color
     from app.services.stable_diffusion import logo_generator
     from fastapi.responses import Response
 

@@ -13,14 +13,11 @@ import traceback
 from PIL import Image
 
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.database import get_db
-from app.models.scan import Scan
 
 router = APIRouter()
 
 @router.post("/analyze/logo")
-async def analyze_logo(file: UploadFile = File(...), db: AsyncSession = Depends(get_db)):
+async def analyze_logo(file: UploadFile = File(...)):
     try:
         # Read file content
         content = await file.read()
@@ -125,31 +122,22 @@ async def analyze_logo(file: UploadFile = File(...), db: AsyncSession = Depends(
         
         remedy = remedy_engine.get_remedy(risk_result['score'], safety_results)
         
-        # --- Save to Database ---
+        # --- Save to JSON Store (Zero-DB) ---
         try:
-            new_scan = Scan(
-                filename=file.filename,
-                brand_name=metadata.get('brand_name') or "Unknown", # We might need to pass brand_name in form data
-                risk_score=risk_result['score'],
+            from app.services.json_store import json_store
+            json_store.add_scan(
+                brand_name=metadata.get('brand_name') or "Unknown",
                 risk_level=risk_result['level'],
-                ocr_text=detected_text,
-                analysis_data={
-                    "risk_factors": risk_result['factors'],
-                    "risk_breakdown": risk_result['breakdown'],
-                    "similar_marks": processed_matches[:5],
-                    "safety": safety_results,
-                    "remedy": remedy
+                risk_score=risk_result['score'],
+                metadata={
+                    "heatmap": True if heatmap_b64 else False,
+                    "ocr_text": detected_text,
+                    "risk_factors": risk_result['factors']
                 }
             )
-            db.add(new_scan)
-            await db.commit()
-            await db.refresh(new_scan)
-            print(f"Saved scan {new_scan.id} to DB")
+            print("Saved scan to JSON Store")
         except Exception as e:
-            print(f"DB Save Error: {e}")
-            import traceback
-            traceback.print_exc()
-            # Don't fail the request if DB save fails
+            print(f"Store Error: {e}")
 
         return {
             "filename": file.filename,
